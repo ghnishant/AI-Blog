@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Quill — AI Blog Studio design system. All colors HSL. */
+
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 224 41% 9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 224 41% 9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 245 84% 69%;          /* #6C63FF */
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 250 90% 76%;
+
+    --secondary: 168 100% 39%;       /* #00C9A7 */
+    --secondary-foreground: 222 47% 6%;
+
+    --muted: 224 30% 14%;
+    --muted-foreground: 215 20% 70%;
+
+    --accent: 168 100% 39%;
+    --accent-foreground: 222 47% 6%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 224 30% 18%;
+    --input: 224 30% 14%;
+    --ring: 245 84% 69%;
+
+    --radius: 0.875rem;
+
+    /* Brand gradients */
+    --gradient-hero: radial-gradient(ellipse at top left, hsl(245 84% 69% / 0.35), transparent 55%),
+                     radial-gradient(ellipse at bottom right, hsl(168 100% 39% / 0.25), transparent 55%),
+                     linear-gradient(180deg, hsl(222 47% 6%), hsl(224 41% 9%));
+    --gradient-primary: linear-gradient(135deg, hsl(245 84% 69%), hsl(280 90% 70%));
+    --gradient-accent: linear-gradient(135deg, hsl(245 84% 69%), hsl(168 100% 45%));
+    --gradient-text: linear-gradient(135deg, hsl(245 84% 78%), hsl(168 100% 55%));
+
+    /* Glass */
+    --glass-bg: hsl(224 41% 12% / 0.6);
+    --glass-border: hsl(245 84% 69% / 0.18);
+
+    /* Shadows */
+    --shadow-glow: 0 0 60px hsl(245 84% 69% / 0.35);
+    --shadow-elegant: 0 20px 60px -20px hsl(245 84% 30% / 0.6);
+    --shadow-card: 0 8px 32px hsl(222 47% 2% / 0.4);
+
+    /* Motion */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 224 41% 8%;
+    --sidebar-foreground: 210 40% 90%;
+    --sidebar-primary: 245 84% 69%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 224 30% 14%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 224 30% 16%;
+    --sidebar-ring: 245 84% 69%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  h1, h2, h3, h4, h5 { @apply font-display tracking-tight; }
+  ::selection { background: hsl(var(--primary) / 0.3); }
+}
+
+@layer utilities {
+  .bg-hero { background: var(--gradient-hero); }
+  .bg-gradient-primary { background: var(--gradient-primary); }
+  .bg-gradient-accent { background: var(--gradient-accent); }
+  .text-gradient {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+  }
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-elegant { box-shadow: var(--shadow-elegant); }
+  .shadow-card { box-shadow: var(--shadow-card); }
+  .prose-quill h1 { @apply font-display text-3xl font-bold mt-10 mb-4 tracking-tight; }
+  .prose-quill h2 { @apply font-display text-2xl font-semibold mt-8 mb-3 tracking-tight; }
+  .prose-quill h3 { @apply font-display text-xl font-semibold mt-6 mb-2; }
+  .prose-quill p { @apply text-base md:text-lg leading-relaxed text-foreground/90 mb-5; }
+  .prose-quill ul { @apply list-disc pl-6 space-y-2 mb-5 text-foreground/90; }
+  .prose-quill a { @apply text-primary-glow underline underline-offset-4 hover:text-secondary transition-colors; }
+  .prose-quill strong { @apply text-foreground font-semibold; }
+  .prose-quill em { @apply italic; }
+
+  .grid-pattern {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.4) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  }
+}
