@@ -7,6 +7,7 @@ const blogSchema = new mongoose.Schema({
   published: { type: Boolean, default: false },
   views: { type: Number, default: 0 },
   tags: [{ type: String }],
+  cover_image_url: { type: String },
   author_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
 

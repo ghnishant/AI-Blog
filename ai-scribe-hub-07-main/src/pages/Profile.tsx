@@ -41,6 +41,32 @@ const Profile = () => {
       .finally(() => setLoading(false));
   }, [user]);
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { toast.error("File is too large (max 5MB)"); return; }
+    
+    const toastId = toast.loading("Uploading image...");
+    try {
+      const token = localStorage.getItem('access_token');
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+        body: formData
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Upload failed');
+      
+      setAvatarUrl(data.url);
+      toast.success("Avatar uploaded", { id: toastId });
+    } catch (err: any) {
+      toast.error(err.message, { id: toastId });
+    }
+  };
+
   const save = async () => {
     const parsed = schema.safeParse({ display_name: displayName, bio, avatar_url: avatarUrl });
     if (!parsed.success) { toast.error(parsed.error.errors[0].message); return; }
@@ -98,8 +124,15 @@ const Profile = () => {
               <p className="text-xs text-muted-foreground text-right">{bio.length} / 500</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="avatar">Avatar URL</Label>
-              <Input id="avatar" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="https://..." maxLength={500} />
+              <Label htmlFor="avatar">Avatar Image URL</Label>
+              <div className="flex gap-2">
+                <Input id="avatar" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="https://... or upload" maxLength={500} />
+                <Label className="cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium inline-flex items-center justify-center rounded-md px-4 shadow-sm">
+                  Upload file
+                  <Input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} />
+                </Label>
+              </div>
+              {avatarUrl && <img src={avatarUrl} alt="Avatar preview" className="h-16 w-16 object-cover rounded-xl mt-2 border border-border" />}
             </div>
 
             <Button variant="hero" onClick={save} disabled={saving} className="w-full">

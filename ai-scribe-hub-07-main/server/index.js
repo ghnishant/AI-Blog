@@ -6,6 +6,8 @@ import authRoutes from './routes/auth.js';
 import blogRoutes from './routes/blogs.js';
 import profileRoutes from './routes/profiles.js';
 import aiAssistRoutes from './routes/ai-assist.js';
+import uploadRoutes from './routes/upload.js';
+import path from 'path';
 
 dotenv.config();
 
@@ -19,6 +21,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/ai-assist', aiAssistRoutes);
+app.use('/api/upload', uploadRoutes);
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {

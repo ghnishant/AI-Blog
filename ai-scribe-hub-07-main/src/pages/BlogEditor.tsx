@@ -53,6 +53,36 @@ const BlogEditor = () => {
       });
   }, [id, user, isEdit, navigate]);
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { toast.error("File is too large (max 5MB)"); return; }
+    
+    const toastId = toast.loading("Uploading image...");
+    try {
+      const token = localStorage.getItem('access_token');
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+        body: formData
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Upload failed');
+      
+      // Full URL mapping for local dev if necessary, but we proxy /uploads through Vite anyway? 
+      // Actually Vite doesn't proxy /uploads. I should add it to vite config or just use full URL.
+      // Wait, Vite config only proxies /api. We can't fetch it locally on React unless Vite proxies /uploads or Express is accessed via port 5000 directly. 
+      // Better to use http://localhost:5000/uploads/... for now OR add /uploads proxy. We'll add proxy later.
+      setCoverUrl(data.url);
+      toast.success("Image uploaded", { id: toastId });
+    } catch (err: any) {
+      toast.error(err.message, { id: toastId });
+    }
+  };
+
   const addTag = () => {
     const t = tagsInput.trim().toLowerCase();
     if (t && !tags.includes(t) && tags.length < 6) setTags([...tags, t]);
@@ -132,8 +162,15 @@ const BlogEditor = () => {
             />
 
             <div className="space-y-2">
-              <Label className="text-xs uppercase tracking-wider text-muted-foreground">Cover image URL (optional)</Label>
-              <Input value={coverUrl} onChange={(e) => setCoverUrl(e.target.value)} placeholder="https://..." className="bg-muted/30" />
+              <Label className="text-xs uppercase tracking-wider text-muted-foreground">Cover image (optional)</Label>
+              <div className="flex gap-2">
+                <Input value={coverUrl} onChange={(e) => setCoverUrl(e.target.value)} placeholder="https://... or upload below" className="bg-muted/30" />
+                <Label className="cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium inline-flex items-center justify-center rounded-md px-4 shadow-sm">
+                  Upload file
+                  <Input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+                </Label>
+              </div>
+              {coverUrl && <img src={coverUrl} alt="Cover preview" className="w-full h-32 object-cover rounded-xl mt-2 border border-border" />}
             </div>
 
             <div className="space-y-2">
